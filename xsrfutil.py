@@ -65,8 +65,6 @@ def generate_token(key, user_id, path="", when=None):
   digester.update(str(when))
   digest = digester.digest()
 
-  print "\n\n%s:%s:%s:%s\n\n" % (str(key), str(user_id), str(path), str(when))
-
   token = base64.urlsafe_b64encode('%s%s%d' % (digest,
                                                DELIMITER,
                                                when))
@@ -177,9 +175,7 @@ class XsrfSecret(db.Model):
     secret = memcache.get('xsrf_secret')
     if not secret:
       xsrf_secret = XsrfSecret.all().get()
-      if xsrf_secret:
-        memcache.set('xsrf_secret', xsrf_secret.secret)
-      else:
+      if not xsrf_secret:
         # hmm, nothing found? We need to generate a secret for xsrf protection.
         secret = binascii.b2a_hex(os.urandom(16))
         xsrf_secret = XsrfSecret(secret=secret)
@@ -189,4 +185,3 @@ class XsrfSecret(db.Model):
       memcache.set('xsrf_secret', secret)
 
     return secret
-
