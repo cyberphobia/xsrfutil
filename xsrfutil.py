@@ -106,10 +106,20 @@ def validate_token(key, token, user_id, path="", current_time=None,
 
   # The given token should match the generated one with the same time.
   expected_token = generate_token(key, user_id, path=path, when=token_time)
-  if token != expected_token:
+  return const_time_compare(expected_token, token)
+
+
+def const_time_compare(a, b):
+  """Compares the the given strings in constant time."""
+  if len(a) != len(b):
     return False
 
-  return True
+  equals = True
+  for x, y in zip(a, b):
+    if x != y:
+      equals = False
+
+  return equals
 
 
 def xsrf_protect(func):
