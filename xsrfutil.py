@@ -114,12 +114,11 @@ def const_time_compare(a, b):
   if len(a) != len(b):
     return False
 
-  equals = True
+  equals = 0
   for x, y in zip(a, b):
-    if x != y:
-      equals = False
+    equals |= ord(x) ^ ord(y)
 
-  return equals
+  return equals == 0
 
 
 def xsrf_protect(func):
